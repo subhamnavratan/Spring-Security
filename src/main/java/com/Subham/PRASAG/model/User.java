@@ -37,7 +37,12 @@ public class User {
     private Role role;
 
     private String filename;
-    @OneToOne(mappedBy = "user")
+    @OneToOne(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private RefreshToken refreshToken;
 
     public User(String email,

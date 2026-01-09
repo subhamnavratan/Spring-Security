@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Date;
@@ -66,7 +67,7 @@ public class AuthService {
 
         emailService.sendEmail(
                 dto.getEmail(),
-                " email verifiction for Signup",
+                "Email Verification for Signup",
                 "OTP is: " + otp
         );
     }
@@ -91,7 +92,7 @@ public class AuthService {
 
         emailService.sendEmail(
                 user.getEmail(),
-                "Signup",
+                "Signup Successful",
                 "Account created successfully"
         );
     }
@@ -102,22 +103,26 @@ public class AuthService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        logindto.getData(),
+                        logindto.getData(), // email
                         logindto.getPassword()
                 )
         );
 
         User user = userRepository.findByEmail(logindto.getData())
-                .orElseThrow(() ->  new UsernameNotFoundException("User not found with Data: " + logindto.getData()));
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "User not found with email: " + logindto.getData()
+                        )
+                );
 
-        String token = jwtService.generateToken(
+        String accessToken = jwtService.generateToken(
                 new CustomUserDetails(user)
         );
 
-        RefreshToken refreshToken = createRefreshToken(user);
+        createRefreshToken(user);
 
         AuthResponse response = new AuthResponse();
-        response.setToken(token);
+        response.setToken(accessToken);
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
 
@@ -165,10 +170,12 @@ public class AuthService {
         emailService.sendEmail(
                 user.getEmail(),
                 "Password Reset",
-                " OTP is: " + otp
+                "OTP is: " + otp
         );
     }
 
+    // 🔥 FINAL & CORRECT
+    @Transactional
     public void verifyForgotPasswordOtp(
             String email,
             Integer otp,
@@ -185,13 +192,34 @@ public class AuthService {
         );
 
         User user = forgotPassword.getUser();
-        user.setPassword(passwordEncoder.encode(resetPassword.getNewPassword()));
-        userRepository.save(user);
+
+        // 🔴 BREAK REFRESH TOKEN RELATION (orphanRemoval handles delete)
+        user.setRefreshToken(null);
+
+        user.setPassword(
+                passwordEncoder.encode(resetPassword.getNewPassword().trim())
+        );
+
+        userRepository.saveAndFlush(user);
 
         forgotPasswordRepository.delete(forgotPassword);
     }
 
     // ===================== HELPERS =====================
+
+    private RefreshToken createRefreshToken(User user) {
+
+        RefreshToken token = new RefreshToken(
+                UUID.randomUUID().toString(),
+                Instant.now().plusSeconds(7 * 24 * 60 * 60),
+                user
+        );
+
+        // 🔥 SET BOTH SIDES OF RELATION
+        user.setRefreshToken(token);
+
+        return refreshTokenRepository.save(token);
+    }
 
     private int generateOtp() {
         return 100000 + new Random().nextInt(900000);
@@ -207,18 +235,4 @@ public class AuthService {
         if (!saved.equals(input))
             throw new RuntimeException("Invalid OTP");
     }
-
-    private RefreshToken createRefreshToken(User user) {
-
-        refreshTokenRepository.deleteByUser(user);
-
-        RefreshToken token = new RefreshToken(
-                UUID.randomUUID().toString(),
-                Instant.now().plusSeconds(7 * 24 * 60 * 60),
-                user
-        );
-
-        return refreshTokenRepository.save(token);
-    }
 }
-

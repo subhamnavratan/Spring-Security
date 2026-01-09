@@ -1,0 +1,172 @@
+{
+  "info": {
+    "name": "PRASAG Authentication API",
+    "_postman_id": "prasag-auth-collection-001",
+    "description": "Postman collection for PRASAG Spring Boot Authentication APIs (OTP Signup, JWT Login, Refresh Token, Forgot Password).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Signup - Send OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/signup",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "signup"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@gmail.com\",\n  \"password\": \"Password@123\",\n  \"rollNO\": \"CS101\",\n  \"name\": \"User Name\",\n  \"role\": \"USER\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Verify Signup OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/verify-signup",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "verify-signup"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@gmail.com\",\n  \"otp\": 123456,\n  \"signupdto\": {\n    \"email\": \"user@gmail.com\",\n    \"password\": \"Password@123\",\n    \"rollNO\": \"CS101\",\n    \"name\": \"User Name\",\n    \"role\": \"USER\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": \"user@gmail.com\",\n  \"password\": \"Password@123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/refresh",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "refresh"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Forgot Password - Send OTP",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{base_url}}/auth/forgot-password?email=user@gmail.com",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "forgot-password"
+          ],
+          "query": [
+            {
+              "key": "email",
+              "value": "user@gmail.com"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Verify Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/verify-forgot-password",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "verify-forgot-password"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@gmail.com\",\n  \"otp\": 600435,\n  \"resetPassword\": {\n    \"password\": \"oldPassword\",\n    \"newPassword\": \"NewPassword@123\"\n  }\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    }
+  ]
+}
