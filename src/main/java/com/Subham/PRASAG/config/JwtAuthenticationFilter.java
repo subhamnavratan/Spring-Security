@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -27,11 +26,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-
+    /**
+     * Skip JWT filter for authentication endpoints
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.startsWith("/auth")
+        String path = request.getServletPath();
+
+        return path.startsWith("/auth/")
+                || path.equals("/auth")
                 || path.startsWith("/error");
     }
 
@@ -44,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
+        // No Authorization header → continue
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -51,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String jwt = authHeader.substring(7).trim();
 
-
+        // Invalid token cases
         if (jwt.isEmpty()
                 || jwt.equalsIgnoreCase("null")
                 || jwt.equalsIgnoreCase("undefined")

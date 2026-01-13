@@ -1,95 +1,59 @@
-# 🔐 Spring Boot JWT Authentication & Authorization
+#  Spring Boot Event Management & Security System
 
-A **production-ready Spring Boot application** implementing **JWT-based authentication and role-based authorization** using **Spring Security**, **JPA**, and **BCrypt password encryption**.
+A **production-ready Spring Boot backend** implementing **JWT-based
+authentication**, **role-based authorization**, **real-time WebSocket
+notifications**, and **secure file handling**.\
+Built following **clean architecture**, **DTO-based APIs**, and
+**stateless security best practices**.
 
-This project follows **clean architecture**, **DTO-based APIs**, and **stateless security** best practices.
+------------------------------------------------------------------------
 
----
+## Features
 
-## 🚀 Features
+-   User **Signup & Login** with secure authentication
+-   **JWT (JSON Web Token)** based authentication and authorization
+-   **Refresh token** support for session continuity
+-   **Role-based access control** (ADMIN, USER) with fine-grained
+    permissions
+-   **BCrypt password hashing**
+-   **Stateless session management**
+-   **OTP-based email verification & password recovery**
+-   **Event & Organizer management** with secured CRUD APIs
+-   **Real-time notifications** using WebSocket (STOMP + SockJS)
+-   **Secure file upload & retrieval** using MultipartFile
+-   **DTO-based request/response handling**
+-   **Centralized exception handling**
+-   Clean separation of layers (**Controller, Service, Repository**)
 
-- User Signup & Login
-- Secure password hashing using **BCrypt**
-- **JWT (JSON Web Token)** based authentication
-- Role-based authorization (`ADMIN`, `USER`, etc.)
-- Stateless session management
-- DTO-based request/response handling
-- Centralized exception handling
-- Clean separation of layers (Controller, Service, Repository)
+------------------------------------------------------------------------
 
----
+## Tech Stack
 
-## 🛠 Tech Stack
+-   Java 17
+-   Spring Boot 3
+-   Spring Security
+-   JWT (jjwt)
+-   Spring Data JPA / Hibernate
+-   MySQL 
+-   WebSocket (STOMP + SockJS)
+-   JavaMail
+-   Maven
 
-- **Java 17**
-- **Spring Boot 3**
-- **Spring Security**
-- **JWT (jjwt)**
-- **Spring Data JPA**
-- **Hibernate**
-- **MySQL / PostgreSQL**
-- **Maven**
+------------------------------------------------------------------------
+##  Postman
 
-
-
-## 🔐 Authentication Flow
-
-1. User signs up or logs in
-2. Credentials are validated
-3. Password verified using BCrypt
-4. JWT generated and returned
-5. Client sends JWT in Authorization header
-
-```
-Authorization: Bearer <JWT_TOKEN>
-```
-
----
-
-## 📌 API Endpoints
-
-### 🔓 Signup
-```
-POST /auth/signup
-```
-
-```json
-{
-  "email": "user@gmail.com",
-  "password": "password123",
-  "name": "User Name",
-  "rollNO": "CS101",
-  "role": "USER"
-}
-```
-
-### 🔓 Login
-```
-POST /auth/login
-```
-
-```json
-{
-  "data": "user@gmail.com",
-  "password": "password123"
-}
-```
+https://drive.google.com/file/d/10NhXNI3ncrXEnE9DY1kbPe7DYeFhuS_c/view?usp=drivesdk
 
 ---
 
-## 🧪 Sample Response
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
-  "email": "user@gmail.com",
-  "role": "USER"
-}
-```
-
-
-
-
-## 👨‍💻 Author
+##  Author
 
 **Subham Kumar Navratan**
+
+
+------------------------------------------------------------------------
+
+##  License
+
+This project is open-source and available for learning and development
+purposes.

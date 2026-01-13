@@ -97,13 +97,11 @@ public class AuthService {
         );
     }
 
-    // ===================== LOGIN =====================
-
     public AuthResponse login(Logindto logindto) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        logindto.getData(), // email
+                        logindto.getData(),
                         logindto.getPassword()
                 )
         );
@@ -115,21 +113,23 @@ public class AuthService {
                         )
                 );
 
+        // ACCESS TOKEN
         String accessToken = jwtService.generateToken(
                 new CustomUserDetails(user)
         );
 
-        createRefreshToken(user);
+        // REFRESH TOKEN
+        RefreshToken refreshToken = createRefreshToken(user);
 
         AuthResponse response = new AuthResponse();
         response.setToken(accessToken);
+        response.setRefreshToken(refreshToken.getRefreshToken());
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
 
         return response;
     }
 
-    // ===================== REFRESH =====================
 
     public AuthResponse refreshAccessToken(RefreshTokenRequest request) {
 
@@ -137,22 +137,25 @@ public class AuthService {
                 refreshTokenRepository.findByRefreshToken(request.getRefreshToken())
                         .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
 
-        if (refreshToken.getExpirationTime().isBefore(Instant.now()))
+        if (refreshToken.getExpirationTime().isBefore(Instant.now())) {
             throw new RuntimeException("Refresh token expired");
+        }
 
         User user = refreshToken.getUser();
 
-        String token = jwtService.generateToken(
+        String newAccessToken = jwtService.generateToken(
                 new CustomUserDetails(user)
         );
 
         AuthResponse response = new AuthResponse();
-        response.setToken(token);
+        response.setToken(newAccessToken);
+        response.setRefreshToken(refreshToken.getRefreshToken()); // 🔥 IMPORTANT
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
 
         return response;
     }
+
 
     // ===================== FORGOT PASSWORD =====================
 

@@ -29,22 +29,50 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/ws/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
+
+
                 )
+
                 .authenticationProvider(authenticationProvider)
+
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
 
         return http.build();
-    }/*LOGIN:
-       password → AuthenticationManager → JWT
-       AFTER LOGIN:
-       JWT → JwtFilter → SecurityContext → Controller*/
+    }
+
+    /*
+      LOGIN FLOW:
+      username + password
+          ↓
+      AuthenticationManager
+          ↓
+      AuthenticationProvider
+          ↓
+      JWT generated & returned
+
+      REQUEST FLOW (after login):
+      Request + JWT
+          ↓
+      JwtAuthenticationFilter
+          ↓
+      SecurityContext
+          ↓
+      @PreAuthorize (ROLE check)
+          ↓
+      Controller
+     */
 }

@@ -9,6 +9,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Configuration
 public class ApplicationConfig {
 
@@ -17,7 +18,6 @@ public class ApplicationConfig {
     public ApplicationConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,9 +33,9 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
+        provider.setUserDetailsService(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
 
         return provider;

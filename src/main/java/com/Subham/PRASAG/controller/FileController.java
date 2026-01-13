@@ -27,7 +27,7 @@ public class FileController {
     private String path;
 
     //  user can upload their own image for profile
-    @PreAuthorize("hasAuthority('USER_WRITE')")
+    @PreAuthorize("hasAuthority('ADMIN_WRITE')")
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFileHandler(
             @RequestPart MultipartFile file) throws IOException {

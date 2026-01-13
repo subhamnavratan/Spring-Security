@@ -1,14 +1,11 @@
 package com.Subham.PRASAG.controller;
 
 import com.Subham.PRASAG.dto.*;
-import com.Subham.PRASAG.model.RefreshToken;
-import com.Subham.PRASAG.model.User;
 import com.Subham.PRASAG.service.AuthService;
 import com.Subham.PRASAG.service.CustomUserDetailsService;
 import com.Subham.PRASAG.service.JwtService;
 import com.Subham.PRASAG.service.RefreshTokenService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
